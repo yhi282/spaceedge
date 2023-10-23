@@ -1,0 +1,54 @@
+# from django.shortcuts import render
+# from django.db.models import Max, Min, Avg, Sum, Count
+
+# from .models import Device
+# from .serializers import DeviceSerializer
+
+# from rest_framework import permissions
+# from rest_framework.response import Response
+# from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, RetrieveUpdateAPIView
+# from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.views import ObtainAuthToken
+# from rest_framework.authentication import TokenAuthentication
+
+# # Create your views here.
+
+# class ObtainAuthToken(ObtainAuthToken):
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.serializer_class(data=request.data, context={'request':request})
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.validated_data['user']
+#         token, created = Token.objects.get_or_create(user=user)
+#         return Response({
+#             'name': user.username,
+#             'email': user.email,
+#             'token':token.key})
+
+# class Ipark:
+#     # device 전체
+#     class DeviceList(ListAPIView):
+#         queryset = Device.objects.all()
+#         serializer_class = DeviceSerializer
+#         authentication_classes = [TokenAuthentication]
+#         permission_classes = [permissions.IsAuthenticated]
+
+#         def get_queryset(self):
+#             duplicates = Device.objects.values("s_num").annotate(num_count = Count("s_num")).filter(num_count__gt=1)
+#             records = Device.objects.filter(s_num__in = [item['s_num'] for item in duplicates])
+#             duplicates_num = [item.sid for item in records]
+#             ex_num = max(duplicates_num)
+#             return Device.objects.filter(m_sid = 136) & Device.objects.exclude(sid=ex_num)
+
+#     # device 개별
+#     class Device(ListAPIView):
+#         queryset = Device.objects.all()
+#         serializer_class = DeviceSerializer
+#         lookup_field = "s_num"
+#         lookup_url_kwarg = "s_num"
+
+#         def get_queryset(self):
+#             duplicates = Device.objects.values("s_num").annotate(num_count = Count("s_num")).filter(num_count__gt=1)
+#             records = Device.objects.filter(s_num__in = [item['s_num'] for item in duplicates])
+#             duplicates_num = [item.sid for item in records]
+#             ex_num = max(duplicates_num)
+#             return Device.objects.filter(m_sid = 136) & Device.objects.exclude(sid=ex_num)
